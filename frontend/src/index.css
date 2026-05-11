@@ -1,0 +1,844 @@
+/* ============================================================================
+   INDEX.CSS - Main Stylesheet Entry Point
+   Oasis Schools - KISU-Inspired Minimal Design
+   ============================================================================ */
+
+/* ============================================================================
+   FONTS - Google Fonts Import - Updated to match KISU
+   ============================================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@300;400;600;700&display=swap');
+
+/* ============================================================================
+   DESIGN SYSTEM - Variables and Tokens
+   ============================================================================ */
+@import './styles/variables.css';
+
+/* ============================================================================
+   BASE STYLES - Reset and Global Elements
+   ============================================================================ */
+@import './styles/base.css';
+
+/* ============================================================================
+   COMPONENT STYLES - Modular Components
+   ============================================================================ */
+@import './styles/navbar.css';
+@import './styles/home.css';
+@import './styles/Footer.css';
+@import './styles/CampusDetail.css';
+@import './styles/Admissions.css';
+
+/* ============================================================================
+   UTILITY CLASSES - Helper and Animation Classes
+   ============================================================================ */
+@import './styles/utilities.css';
+
+
+
+
+
+/* ============================================================================
+   TYPOGRAPHY OVERRIDES - KISU Style
+   ============================================================================ */
+
+/* Apply KISU font hierarchy */
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: #333333;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6,
+.section-title,
+.hero-title,
+.stat-number,
+.event-date {
+  font-family: 'Merriweather', serif;
+  font-weight: 700;
+  color: #1a2b4c; /* KISU's softer dark blue */
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: clamp(2.5rem, 5vw, 3.8rem); }
+h2 { font-size: clamp(2rem, 4vw, 2.8rem); }
+h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
+
+p, li, a, .text-body, .description {
+  font-family: 'Open Sans', sans-serif;
+  color: #4a4a4a;
+  line-height: 1.8;
+}
+
+/* ============================================================================
+   SIMPLIFIED VISUAL STYLES - Remove heavy effects
+   ============================================================================ */
+
+/* Remove gradients and heavy shadows */
+.hero,
+.cta-section,
+.apply-button,
+.hero-btn-primary {
+  background: #1a2b4c !important; /* Solid color instead of gradient */
+  box-shadow: none !important;
+}
+
+/* Simplify cards and containers */
+.card,
+.dropdown-menu,
+.facilities-card,
+.month-card,
+.club-card,
+.event-card,
+.testimonial-card {
+  border: 1px solid #eaeaea !important;
+  box-shadow: none !important;
+  border-radius: 0 !important; /* Optional: remove rounded corners for KISU's sharp look */
+}
+
+/* Remove animations and transforms if they're too flashy */
+.hero-title,
+.hero-description,
+.hero-actions,
+.stat-card,
+.facility-item,
+.program-card,
+.event-card {
+  animation: none !important;
+  transform: none !important;
+}
+
+.stat-card:hover,
+.facility-item:hover,
+.program-card:hover,
+.event-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Simplify buttons */
+.hero-btn-primary,
+.hero-btn-secondary,
+.apply-button,
+.cta-button {
+  border-radius: 0; /* Sharp corners like KISU */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.8rem 2rem;
+}
+
+.hero-btn-primary {
+  background: #1a2b4c;
+  color: white;
+  border: 2px solid #1a2b4c;
+}
+
+.hero-btn-primary:hover {
+  background: transparent;
+  color: #1a2b4c;
+}
+
+.hero-btn-secondary {
+  background: transparent;
+  color: #1a2b4c;
+  border: 2px solid #1a2b4c;
+}
+
+.hero-btn-secondary:hover {
+  background: #1a2b4c;
+  color: white;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN - Mobile First Breakpoints
+   ============================================================================ */
+
+/* Mobile Devices (≤ 640px) - Base styles are mobile-first */
+/* No additional media query needed as base.css handles mobile */
+
+/* Tablet Devices (641px - 1024px) */
+@media screen and (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --container-padding: 1.5rem;
+    --spacing-md: 1.25rem;
+    --spacing-lg: 2rem;
+  }
+
+  .container {
+    padding: 0 var(--container-padding);
+  }
+
+  h1 { font-size: clamp(2.5rem, 6vw, 3.5rem); }
+  h2 { font-size: clamp(2rem, 5vw, 2.8rem); }
+  h3 { font-size: clamp(1.5rem, 4vw, 2rem); }
+}
+
+/* Desktop Devices (≥ 1025px) */
+@media screen and (min-width: 1025px) {
+  :root {
+    --container-padding: 2rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2.5rem;
+  }
+
+  .container {
+    padding: 0 var(--container-padding);
+  }
+
+  h1 { font-size: clamp(3rem, 5vw, 4rem); }
+  h2 { font-size: clamp(2.5rem, 4vw, 3rem); }
+  h3 { font-size: clamp(1.8rem, 3vw, 2.2rem); }
+}
+
+/* Large Desktop Devices (≥ 1440px) */
+@media screen and (min-width: 1440px) {
+  :root {
+    --container-max-width: 1440px;
+  }
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+@media print {
+  @import './styles/print.css';
+  
+  /* Print-specific overrides */
+  .no-print,
+  .navbar,
+  .top-bar,
+  .mobile-menu-btn,
+  .hero-actions,
+  .cta-section,
+  .contact-bar,
+  .newsletter-section,
+  .program-finder,
+  .virtual-tour-section,
+  .testimonials-carousel .carousel-arrow,
+  .carousel-dots {
+    display: none !important;
+  }
+
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+    background: #fff;
+  }
+
+  a {
+    text-decoration: none;
+    color: #000;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 10pt;
+    font-style: italic;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  table {
+    page-break-inside: avoid;
+  }
+
+  @page {
+    margin: 2cm;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-white: #1a1a1a;
+    --color-gray-50: #2d2d2d;
+    --color-gray-100: #333333;
+    --color-gray-200: #404040;
+    --color-gray-300: #4d4d4d;
+    --color-gray-400: #666666;
+    --color-gray-500: #808080;
+    --color-gray-600: #999999;
+    --color-gray-700: #b3b3b3;
+    --color-gray-800: #cccccc;
+    --color-gray-900: #e6e6e6;
+  }
+
+  body {
+    background-color: #1a1a1a;
+    color: #e6e6e6;
+  }
+
+  .card,
+  .dropdown-menu,
+  .mobile-menu,
+  .facilities-card,
+  .month-card,
+  .club-card,
+  .event-card,
+  .testimonial-card {
+    background-color: #2d2d2d;
+    border-color: #404040;
+  }
+
+  .section-title,
+  .card-title,
+  .stat-number {
+    color: #e6e6e6;
+  }
+
+  .section-description,
+  .stat-label,
+  .event-title,
+  .club-name {
+    color: #b3b3b3;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY - High Contrast & Reduced Motion
+   ============================================================================ */
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --color-primary: #0000cc;
+    --color-secondary: #cc9900;
+    --color-white: #ffffff;
+    --color-black: #000000;
+  }
+
+  .hero,
+  .cta-section,
+  .apply-button,
+  .hero-btn-primary {
+    background: var(--color-primary);
+  }
+
+  .hero-btn-secondary {
+    border: 2px solid var(--color-white);
+  }
+
+  .btn,
+  .nav-link,
+  .top-bar-link {
+    outline: 2px solid transparent;
+  }
+
+  .btn:focus,
+  .nav-link:focus,
+  .top-bar-link:focus {
+    outline-color: var(--color-secondary);
+  }
+}
+
+/* Reduced Motion - Keep as is - important for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-slide-up,
+  .animate-fade-in,
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .hover\:scale-105:hover,
+  .hover\:-translate-y-1:hover {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================================
+   LOADING STATES & SKELETON SCREENS
+   ============================================================================ */
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-200) 25%,
+    var(--color-gray-300) 37%,
+    var(--color-gray-200) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+.skeleton-text {
+  height: 1rem;
+  border-radius: 0; /* Sharp corners for KISU style */
+  margin-bottom: var(--spacing-sm);
+}
+
+.skeleton-text:nth-child(2) {
+  width: 90%;
+}
+
+.skeleton-text:nth-child(3) {
+  width: 80%;
+}
+
+.skeleton-circle {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0; /* Sharp corners for KISU style */
+}
+
+/* ============================================================================
+   SCROLLBAR STYLING - Keep minimal
+   ============================================================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1a2b4c;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3b5c;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1a2b4c #f1f1f1;
+}
+
+/* ============================================================================
+   SELECTION STYLING
+   ============================================================================ */
+::selection {
+  background-color: #1a2b4c;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: #1a2b4c;
+  color: #ffffff;
+}
+
+/* ============================================================================
+   ERROR STATES & VALIDATION
+   ============================================================================ */
+.error-boundary {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  text-align: center;
+  background: #1a2b4c; /* Solid color instead of gradient */
+  color: #ffffff;
+}
+
+.error-boundary h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: var(--spacing-md);
+  color: #ffffff;
+}
+
+.error-boundary p {
+  font-size: 1.125rem;
+  margin-bottom: var(--spacing-xl);
+  opacity: 0.9;
+}
+
+.error-boundary button {
+  background: #ffffff;
+  color: #1a2b4c;
+  border: 2px solid #ffffff;
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.error-boundary button:hover {
+  background: transparent;
+  color: #ffffff;
+}
+
+/* ============================================================================
+   LOADING SPINNER - Keep minimal
+   ============================================================================ */
+.loading-spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid #eaeaea;
+  border-top-color: #1a2b4c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Full page loader */
+.page-loader {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.page-loader .loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border-width: 3px;
+}
+
+/* ============================================================================
+   TOAST NOTIFICATIONS - Simplify
+   ============================================================================ */
+.toast-container {
+  position: fixed;
+  bottom: var(--spacing-xl);
+  right: var(--spacing-xl);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.toast {
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  min-width: 300px;
+}
+
+.toast.success { border-left: 4px solid #10b981; }
+.toast.error { border-left: 4px solid #ef4444; }
+.toast.warning { border-left: 4px solid #f59e0b; }
+.toast.info { border-left: 4px solid #3b82f6; }
+
+.toast-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.toast-content {
+  flex: 1;
+}
+
+.toast-title {
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  font-family: 'Merriweather', serif;
+}
+
+.toast-message {
+  font-size: 0.875rem;
+  color: #666666;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: #999999;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+}
+
+.toast-close:hover {
+  color: #333333;
+}
+
+/* ============================================================================
+   MODAL DIALOGS - Simplify
+   ============================================================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.modal {
+  background: #ffffff;
+  border: 1px solid #eaeaea;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  font-family: 'Merriweather', serif;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #999999;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+}
+
+.modal-close:hover {
+  color: #333333;
+}
+
+.modal-body {
+  padding: var(--spacing-lg);
+}
+
+.modal-footer {
+  padding: var(--spacing-lg);
+  border-top: 1px solid #eaeaea;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+}
+
+/* ============================================================================
+   RTL SUPPORT
+   ============================================================================ */
+[dir="rtl"] {
+  .nav-link .chevron {
+    transform: rotate(180deg);
+  }
+  
+  .hero-actions {
+    flex-direction: row-reverse;
+  }
+  
+  .contact-item {
+    flex-direction: row-reverse;
+  }
+  
+  .testimonial-card {
+    direction: rtl;
+  }
+  
+  .toast {
+    border-left: none;
+    border-right: 4px solid;
+  }
+  
+  .modal-footer {
+    justify-content: flex-start;
+  }
+}
+
+/* ============================================================================
+   FALLBACKS & PROGRESSIVE ENHANCEMENT
+   ============================================================================ */
+
+/* No JavaScript fallback */
+.no-js .lazy-load {
+  display: none;
+}
+
+.no-js .js-required {
+  display: none;
+}
+
+/* WebP support detection */
+.webp .hero-image {
+  background-image: url('/images/hero.webp');
+}
+
+.no-webp .hero-image {
+  background-image: url('/images/hero.jpg');
+}
+
+/* ============================================================================
+   DEBUG STYLES (Development Only)
+   ============================================================================ */
+.debug * {
+  outline: 1px solid rgba(255, 0, 0, 0.1);
+}
+
+.debug-grid {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+
+
+
+/* In your main CSS file (e.g., index.css or App.css) */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}
+
+.delay-500 {
+  animation-delay: 0.5s;
+}
+
+.delay-700 {
+  animation-delay: 0.7s;
+}
+
+.delay-1000 {
+  animation-delay: 1s;
+}
+
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #3b82f6, #6366f1);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #2563eb, #4f46e5);
+}
+
+/* Glass morphism effects */
+.glass {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pulse animation */
+.pulse-slow {
+  animation: pulse 3s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
