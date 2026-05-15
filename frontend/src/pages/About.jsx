@@ -1,6 +1,7 @@
-// pages/About.jsx
+// pages/About.jsx - Debug Version
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import {
   Eye, Target, Heart, Award, Users, BookOpen, 
   Calendar, MapPin, Quote, Star, Shield, 
@@ -11,201 +12,265 @@ import {
 } from 'lucide-react';
 import '../styles/About.css';
 
+// Icon mapping
+const iconMap = {
+  'Users': Users,
+  'Award': Award,
+  'Trophy': Trophy,
+  'Shield': Shield,
+  'Sparkles': Sparkles,
+  'Heart': Heart,
+  'Target': Target,
+  'Eye': Eye,
+  'Calendar': Calendar,
+  'GraduationCap': GraduationCap,
+  'Building2': Building2,
+  'MapPin': MapPin,
+  'Quote': Quote,
+};
+
 const About = () => {
   const [activeTab, setActiveTab] = useState('mission');
-  const [animated, setAnimated] = useState(false);
+  const [aboutData, setAboutData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [debug, setDebug] = useState({});
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const elements = document.querySelectorAll('.animate-on-scroll');
-      elements.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight - 100;
-        if (isVisible) {
-          el.classList.add('animated');
+  // API Base URL - Same as news component
+  const API_BASE_URL = 'http://127.0.0.1:8000/api/website';
+
+  // Fetch about page data
+  const fetchAboutData = async () => {
+    setLoading(true);
+    setDebug({ ...debug, fetching: true, url: `${API_BASE_URL}/about-data/` });
+    
+    try {
+      console.log('Fetching about data from:', `${API_BASE_URL}/about-data/`);
+      
+      const response = await axios.get(`${API_BASE_URL}/about-data/`, {
+        timeout: 10000,
+        headers: {
+          'Content-Type': 'application/json',
         }
       });
+      
+      console.log('About data response:', response.data);
+      setDebug({ 
+        ...debug, 
+        success: true, 
+        data: response.data,
+        status: response.status 
+      });
+      
+      setAboutData(response.data);
+      setError(null);
+    } catch (err) {
+      console.error('Error details:', err);
+      console.error('Error message:', err.message);
+      console.error('Error response:', err.response);
+      
+      setDebug({
+        ...debug,
+        error: true,
+        errorMessage: err.message,
+        errorResponse: err.response?.data,
+        errorStatus: err.response?.status
+      });
+      
+      setError(`Failed to load about page: ${err.message}`);
+      
+      // Set mock data as fallback
+      setAboutData(getMockAboutData());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Mock data for fallback
+  const getMockAboutData = () => {
+    return {
+      settings: {
+        hero_title: 'About Our School',
+        hero_subtitle: 'Model Islamic & City Model Schools - Excellence in Education',
+        hero_badge_text: 'بسم الله الرحمن الرحيم',
+        info_card_1_title: 'Our Location',
+        info_card_1_text: 'Former TAWAKAL PRIMARY SCHOOL, Pangsha Ward, Arua',
+        info_card_2_title: 'Established',
+        info_card_2_text: '2008',
+        info_card_3_title: 'Our Motto',
+        info_card_3_text: 'Excellence is our pride',
+        cta_title: 'Join Our Learning Community',
+        cta_text: 'Give your child the gift of quality Islamic education',
+        cta_button_text: 'Apply for Admission',
+        cta_button_link: '/admissions/apply',
+        cta_secondary_button_text: 'Contact Us',
+        cta_secondary_button_link: '/contact',
+      },
+      history_milestones: [
+        { year: '2008', title: 'Foundation', description: 'School was established with 25 students' },
+        { year: '2015', title: 'Expansion', description: 'Added primary section and new campus' },
+        { year: '2024', title: 'Present Day', description: 'Serving over 500 students across multiple campuses' }
+      ],
+      core_values: [
+        { name: 'Honesty', arabic_name: 'الصدق', icon: 'Shield', color: '#10B981', description: 'We uphold truthfulness and integrity' },
+        { name: 'Excellence', arabic_name: 'التميز', icon: 'Trophy', color: '#F59E0B', description: 'We strive for the highest standards' },
+        { name: 'Teamwork', arabic_name: 'العمل الجماعي', icon: 'Users', color: '#8B5CF6', description: 'We work together for success' }
+      ],
+      leadership: [
+        {
+          id: 1,
+          name: 'Dr. Ahmed Hassan',
+          position: 'Founder & Director',
+          qualification: 'PhD in Islamic Education',
+          experience: '25+ years',
+          bio: 'Experienced educational leader',
+          image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&auto=format',
+          email: 'ahmed@example.com'
+        }
+      ],
+      statistics: [
+        { value: '15+', label: 'Years of Excellence', icon: 'Calendar' },
+        { value: '500+', label: 'Students', icon: 'Users' },
+        { value: '45+', label: 'Dedicated Staff', icon: 'GraduationCap' }
+      ],
+      mission: {
+        title: 'Our Mission',
+        description: 'To provide quality education rooted in Islamic values',
+        points: ['Point 1', 'Point 2', 'Point 3'],
+        icon: 'Target'
+      },
+      vision: {
+        title: 'Our Vision',
+        description: 'To be a center of excellence',
+        points: ['Point 1', 'Point 2', 'Point 3'],
+        icon: 'Eye'
+      }
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    
-    return () => window.removeEventListener('scroll', handleScroll);
+  };
+
+  useEffect(() => {
+    fetchAboutData();
   }, []);
 
-  // School Data
-  const schoolData = {
-    name: "Model Islamic & City Model Schools",
-    established: 2008,
-    location: "Former TAWAKAL PRIMARY SCHOOL, Pangsha Ward, Arua",
-    motto: "Excellence is our pride",
-    
-    history: {
-      founding: "Model Islamic School was established in 2008 with a vision to provide quality Islamic education combined with modern academics in Arua, Uganda. What started as a small kindergarten with just 25 students has grown into a reputable institution with multiple campuses across Arua district.",
-      growth: "Over the years, the school expanded to include primary education, and later established City Model School to cater to the growing demand for quality education in the region. Today, we serve over 500 students across our campuses with a dedicated team of 45+ qualified teachers.",
-      milestone: "Our journey has been marked by continuous improvement, adoption of modern teaching methodologies, and unwavering commitment to nurturing young minds with Islamic values."
-    },
-    
-    mission: {
-      title: "Our Mission",
-      description: "To improve sustainable Islamic environment and quality of moral life of all Muslims in the district and to promote and sustain socio-economic development, good governance and culture of tolerance.",
-      points: [
-        "Provide quality education rooted in Islamic values",
-        "Nurture students to become responsible global citizens",
-        "Foster academic excellence and character development",
-        "Create a supportive learning environment for all students"
-      ]
-    },
-    
-    vision: {
-      title: "Our Vision",
-      description: "To have a Spiritual/morally upright, productive and prosperous Muslim Community.",
-      points: [
-        "Be a center of excellence in Islamic and secular education",
-        "Produce generations of confident, capable Muslim leaders",
-        "Contribute positively to community development",
-        "Set standards for quality education in the region"
-      ]
-    },
-    
-    coreValues: [
-      { 
-        name: "Honesty", 
-        arabic: "الصدق",
-        icon: Shield, 
-        description: "We uphold truthfulness and integrity in all our dealings",
-        color: "#10B981"
-      },
-      { 
-        name: "Reliability", 
-        arabic: "الموثوقية",
-        icon: Award, 
-        description: "We are dependable and consistent in delivering quality education",
-        color: "#3B82F6"
-      },
-      { 
-        name: "Excellence", 
-        arabic: "التميز",
-        icon: Trophy, 
-        description: "We strive for the highest standards in everything we do",
-        color: "#F59E0B"
-      },
-      { 
-        name: "Teamwork", 
-        arabic: "العمل الجماعي",
-        icon: Users, 
-        description: "We work together for the success of our students",
-        color: "#8B5CF6"
-      },
-      { 
-        name: "Innovation", 
-        arabic: "الابتكار",
-        icon: Sparkles, 
-        description: "We embrace creative and modern teaching methods",
-        color: "#EC4899"
-      },
-      { 
-        name: "Respect", 
-        arabic: "احترام",
-        icon: Heart, 
-        description: "We treat everyone with dignity and Islamic manners",
-        color: "#EF4444"
-      }
-    ],
-    
-    leadership: [
-      {
-        id: 1,
-        name: "Dr. Ahmed Hassan",
-        position: "Founder & Director",
-        qualification: "PhD in Islamic Education",
-        experience: "25+ years in education",
-        bio: "Dr. Ahmed Hassan founded Model Islamic School with a vision to provide quality Islamic education. He holds a PhD in Islamic Education and has over 25 years of experience in educational leadership.",
-        image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&auto=format",
-        social: { linkedin: "#", twitter: "#", email: "ahmed.hassan@modelislamic.ac.ug" }
-      },
-      {
-        id: 2,
-        name: "Mrs. Fatima Ibrahim",
-        position: "Head of School",
-        qualification: "MA in Educational Leadership",
-        experience: "18+ years",
-        bio: "Mrs. Fatima Ibrahim leads the academic programs with dedication and expertise. She is committed to maintaining high educational standards and fostering a positive learning environment.",
-        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format",
-        social: { linkedin: "#", email: "fatima.ibrahim@modelislamic.ac.ug" }
-      },
-      {
-        id: 3,
-        name: "Mr. Yusuf Ssettuba",
-        position: "Academic Director",
-        qualification: "BSc Education, MA Curriculum Development",
-        experience: "20+ years",
-        bio: "Mr. Yusuf Ssettuba oversees curriculum development and academic standards across all campuses, ensuring alignment with national requirements and Islamic values.",
-        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format",
-        social: { linkedin: "#", email: "yusuf.ssettuba@modelislamic.ac.ug" }
-      },
-      {
-        id: 4,
-        name: "Sheikh Muhammad Ali",
-        position: "Head of Islamic Studies",
-        qualification: "Bachelor's in Islamic Sharia",
-        experience: "15+ years",
-        bio: "Sheikh Muhammad Ali leads the Islamic Studies department, ensuring authentic Quranic teachings and proper Islamic education for all students.",
-        image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format",
-        social: { email: "muhammad.ali@modelislamic.ac.ug" }
-      },
-      {
-        id: 5,
-        name: "Ms. Aisha Nambi",
-        position: "Early Years Coordinator",
-        qualification: "Diploma in Early Childhood Education",
-        experience: "12+ years",
-        bio: "Ms. Aisha Nambi specializes in early childhood development and leads our kindergarten programs with passion and care.",
-        image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&auto=format",
-        social: { email: "aisha.nambi@modelislamic.ac.ug" }
-      },
-      {
-        id: 6,
-        name: "Mr. James Okello",
-        position: "Administrative Manager",
-        qualification: "MBA in Management",
-        experience: "10+ years",
-        bio: "Mr. James Okello manages school operations, ensuring smooth administration and excellent parent service across all campuses.",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format",
-        social: { email: "james.okello@modelislamic.ac.ug" }
-      }
-    ],
-    
-    stats: [
-      { value: "15+", label: "Years of Excellence", icon: Calendar },
-      { value: "500+", label: "Students", icon: Users },
-      { value: "45+", label: "Dedicated Staff", icon: GraduationCap },
-      { value: "4", label: "Campuses", icon: Building2 }
-    ]
+  // Loading state
+  if (loading) {
+    return (
+      <div className="about-page">
+        <div className="container py-5">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
+            <p className="text-blue-600">Loading about page from: {API_BASE_URL}/about-data/</p>
+          </div>
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-3">Loading about page content...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Debug error state
+  if (error && !aboutData) {
+    return (
+      <div className="about-page">
+        <div className="container py-5">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-4">
+            <h2 className="text-red-800 font-bold mb-2">Error Loading About Page</h2>
+            <p className="text-red-700 mb-2">{error}</p>
+            
+            {/* Debug Information */}
+            <div className="bg-white rounded p-4 mt-4">
+              <h3 className="font-bold mb-2">Debug Information:</h3>
+              <pre className="text-xs overflow-auto">
+                {JSON.stringify(debug, null, 2)}
+              </pre>
+            </div>
+            
+            <button 
+              onClick={fetchAboutData}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Try Again
+            </button>
+          </div>
+
+          {/* Show mock data button */}
+          <div className="mt-4">
+            <button 
+              onClick={() => {
+                setAboutData(getMockAboutData());
+                setError(null);
+              }}
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              Load Mock Data for Testing
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!aboutData) {
+    return (
+      <div className="about-page">
+        <div className="container py-5">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+            <p>No data available. Click the button above to load mock data.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const settings = aboutData.settings || {};
+  const historyMilestones = aboutData.history_milestones || [];
+  const coreValues = aboutData.core_values || [];
+  const leadership = aboutData.leadership || [];
+  const statistics = aboutData.statistics || [];
+  const mission = aboutData.mission || {};
+  const vision = aboutData.vision || {};
+
+  const getIcon = (iconName, size = 24) => {
+    const IconComponent = iconMap[iconName] || Shield;
+    return <IconComponent size={size} />;
   };
 
   return (
     <div className="about-page">
+      {/* Success Banner */}
+      <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4 text-sm mx-4 mt-4">
+        <p className="text-green-700">✅ About Page API Connected: {API_BASE_URL}/about-data/</p>
+        <p className="text-green-700">📊 Found {statistics.length} statistics, {leadership.length} leaders, {coreValues.length} values</p>
+      </div>
+
       {/* Hero Section */}
       <section className="about-hero">
         <div className="about-hero-overlay"></div>
         <div className="container">
           <div className="about-hero-content">
-            <div className="hero-badge">
-              <span className="arabic-text">بسم الله الرحمن الرحيم</span>
-            </div>
-            <h1>About Our School</h1>
-            <p>Model Islamic & City Model Schools - Excellence in Education Since {schoolData.established}</p>
+            {settings.hero_badge_text && (
+              <div className="hero-badge">
+                <span className="arabic-text">{settings.hero_badge_text}</span>
+              </div>
+            )}
+            <h1>{settings.hero_title || 'About Our School'}</h1>
+            <p>{settings.hero_subtitle || 'Model Islamic & City Model Schools - Excellence in Education'}</p>
             <div className="hero-stats">
-              {schoolData.stats.map((stat, idx) => (
-                <div key={idx} className="hero-stat">
-                  <stat.icon size={24} />
-                  <div className="hero-stat-info">
-                    <span className="hero-stat-value">{stat.value}</span>
-                    <span className="hero-stat-label">{stat.label}</span>
+              {statistics.map((stat, idx) => {
+                const StatIcon = iconMap[stat.icon] || Users;
+                return (
+                  <div key={idx} className="hero-stat">
+                    <StatIcon size={24} />
+                    <div className="hero-stat-info">
+                      <span className="hero-stat-value">{stat.value}</span>
+                      <span className="hero-stat-label">{stat.label}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -219,70 +284,60 @@ const About = () => {
       <div className="container">
         {/* Quick Info Cards */}
         <div className="quick-info-cards">
-          <div className="info-card animate-on-scroll">
+          <div className="info-card">
             <MapPin size={28} />
-            <h3>Our Location</h3>
-            <p>{schoolData.location}</p>
+            <h3>{settings.info_card_1_title || 'Our Location'}</h3>
+            <p>{settings.info_card_1_text || 'Former TAWAKAL PRIMARY SCHOOL, Pangsha Ward, Arua'}</p>
           </div>
-          <div className="info-card animate-on-scroll">
+          <div className="info-card">
             <Calendar size={28} />
-            <h3>Established</h3>
-            <p>{schoolData.established}</p>
+            <h3>{settings.info_card_2_title || 'Established'}</h3>
+            <p>{settings.info_card_2_text || '2008'}</p>
           </div>
-          <div className="info-card animate-on-scroll">
+          <div className="info-card">
             <Quote size={28} />
-            <h3>Our Motto</h3>
-            <p>{schoolData.motto}</p>
+            <h3>{settings.info_card_3_title || 'Our Motto'}</h3>
+            <p>{settings.info_card_3_text || 'Excellence is our pride'}</p>
           </div>
         </div>
 
         {/* History Section */}
-        <section className="history-section animate-on-scroll">
-          <div className="section-header">
-            <span className="section-badge">Our Journey</span>
-            <h2>History of Excellence</h2>
-            <div className="section-line"></div>
-          </div>
-          
-          <div className="history-grid">
-            <div className="history-content">
-              <div className="timeline-item">
-                <div className="timeline-year">2008</div>
-                <div className="timeline-content">
-                  <h3>Foundation</h3>
-                  <p>{schoolData.history.founding}</p>
-                </div>
+        {historyMilestones.length > 0 && (
+          <section className="history-section">
+            <div className="section-header">
+              <span className="section-badge">Our Journey</span>
+              <h2>History of Excellence</h2>
+              <div className="section-line"></div>
+            </div>
+            
+            <div className="history-grid">
+              <div className="history-content">
+                {historyMilestones.map((milestone, idx) => (
+                  <div key={idx} className="timeline-item">
+                    <div className="timeline-year">{milestone.year}</div>
+                    <div className="timeline-content">
+                      <h3>{milestone.title}</h3>
+                      <p>{milestone.description}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="timeline-item">
-                <div className="timeline-year">2015</div>
-                <div className="timeline-content">
-                  <h3>Expansion</h3>
-                  <p>{schoolData.history.growth}</p>
-                </div>
-              </div>
-              <div className="timeline-item">
-                <div className="timeline-year">2024</div>
-                <div className="timeline-content">
-                  <h3>Present Day</h3>
-                  <p>{schoolData.history.milestone}</p>
+              <div className="history-image">
+                <img 
+                  src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&auto=format" 
+                  alt="School History"
+                />
+                <div className="image-caption">
+                  <Quote size={20} />
+                  <span>{settings.info_card_3_text || 'Excellence is our pride'}</span>
                 </div>
               </div>
             </div>
-            <div className="history-image">
-              <img 
-                src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&auto=format" 
-                alt="School History"
-              />
-              <div className="image-caption">
-                <Quote size={20} />
-                <span>{schoolData.motto}</span>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Mission & Vision Tabs */}
-        <section className="mission-vision-section animate-on-scroll">
+        <section className="mission-vision-section">
           <div className="section-header">
             <span className="section-badge">Our Purpose</span>
             <h2>Mission & Vision</h2>
@@ -308,42 +363,46 @@ const About = () => {
             </div>
             
             <div className="tab-content">
-              {activeTab === 'mission' && (
+              {activeTab === 'mission' && mission && (
                 <div className="mission-content">
                   <div className="mv-card">
                     <div className="mv-icon">
-                      <Target size={48} />
+                      {getIcon(mission.icon || 'Target', 48)}
                     </div>
-                    <h3>{schoolData.mission.title}</h3>
-                    <p className="mv-description">{schoolData.mission.description}</p>
-                    <div className="mv-points">
-                      {schoolData.mission.points.map((point, idx) => (
-                        <div key={idx} className="mv-point">
-                          <CheckCircle size={18} />
-                          <span>{point}</span>
-                        </div>
-                      ))}
-                    </div>
+                    <h3>{mission.title || 'Our Mission'}</h3>
+                    <p className="mv-description">{mission.description}</p>
+                    {mission.points && mission.points.length > 0 && (
+                      <div className="mv-points">
+                        {mission.points.map((point, idx) => (
+                          <div key={idx} className="mv-point">
+                            <CheckCircle size={18} />
+                            <span>{point}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
               
-              {activeTab === 'vision' && (
+              {activeTab === 'vision' && vision && (
                 <div className="vision-content">
                   <div className="mv-card">
                     <div className="mv-icon">
-                      <Eye size={48} />
+                      {getIcon(vision.icon || 'Eye', 48)}
                     </div>
-                    <h3>{schoolData.vision.title}</h3>
-                    <p className="mv-description">{schoolData.vision.description}</p>
-                    <div className="mv-points">
-                      {schoolData.vision.points.map((point, idx) => (
-                        <div key={idx} className="mv-point">
-                          <CheckCircle size={18} />
-                          <span>{point}</span>
-                        </div>
-                      ))}
-                    </div>
+                    <h3>{vision.title || 'Our Vision'}</h3>
+                    <p className="mv-description">{vision.description}</p>
+                    {vision.points && vision.points.length > 0 && (
+                      <div className="mv-points">
+                        {vision.points.map((point, idx) => (
+                          <div key={idx} className="mv-point">
+                            <CheckCircle size={18} />
+                            <span>{point}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -352,97 +411,109 @@ const About = () => {
         </section>
 
         {/* Core Values Section */}
-        <section className="core-values-section animate-on-scroll">
-          <div className="section-header">
-            <span className="section-badge">Our Foundations</span>
-            <h2>Core Islamic Values</h2>
-            <p>The principles that guide everything we do</p>
-            <div className="section-line"></div>
-          </div>
+        {coreValues.length > 0 && (
+          <section className="core-values-section">
+            <div className="section-header">
+              <span className="section-badge">Our Foundations</span>
+              <h2>Core Islamic Values</h2>
+              <p>The principles that guide everything we do</p>
+              <div className="section-line"></div>
+            </div>
 
-          <div className="values-grid">
-            {schoolData.coreValues.map((value, idx) => {
-              const Icon = value.icon;
-              return (
-                <div key={idx} className="value-card">
-                  <div className="value-icon" style={{ backgroundColor: value.color + '20', color: value.color }}>
-                    <Icon size={32} />
+            <div className="values-grid">
+              {coreValues.map((value, idx) => {
+                const Icon = iconMap[value.icon] || Shield;
+                return (
+                  <div key={idx} className="value-card">
+                    <div className="value-icon" style={{ backgroundColor: value.color + '20', color: value.color }}>
+                      <Icon size={32} />
+                    </div>
+                    <div className="value-content">
+                      <h3>
+                        {value.name}
+                        {value.arabic_name && (
+                          <span className="value-arabic">{value.arabic_name}</span>
+                        )}
+                      </h3>
+                      <p>{value.description}</p>
+                    </div>
                   </div>
-                  <div className="value-content">
-                    <h3>
-                      {value.name}
-                      <span className="value-arabic">{value.arabic}</span>
-                    </h3>
-                    <p>{value.description}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Leadership Section */}
-        <section className="leadership-section animate-on-scroll">
-          <div className="section-header">
-            <span className="section-badge">Our Leaders</span>
-            <h2>Meet Our Leadership Team</h2>
-            <p>Dedicated professionals committed to your child's success</p>
-            <div className="section-line"></div>
-          </div>
+        {leadership.length > 0 && (
+          <section className="leadership-section">
+            <div className="section-header">
+              <span className="section-badge">Our Leaders</span>
+              <h2>Meet Our Leadership Team</h2>
+              <p>Dedicated professionals committed to your child's success</p>
+              <div className="section-line"></div>
+            </div>
 
-          <div className="leadership-grid">
-            {schoolData.leadership.map((leader) => (
-              <div key={leader.id} className="leader-card">
-                <div className="leader-image">
-                  <img src={leader.image} alt={leader.name} />
-                  <div className="leader-social">
-                    {leader.social.linkedin && (
-                      <a href={leader.social.linkedin} target="_blank" rel="noopener noreferrer">
-                        <Linkedin size={16} />
-                      </a>
-                    )}
-                    {leader.social.twitter && (
-                      <a href={leader.social.twitter} target="_blank" rel="noopener noreferrer">
-                        <Twitter size={16} />
-                      </a>
-                    )}
-                    <a href={`mailto:${leader.social.email}`}>
-                      <Mail size={16} />
-                    </a>
+            <div className="leadership-grid">
+              {leadership.map((leader) => (
+                <div key={leader.id} className="leader-card">
+                  <div className="leader-image">
+                    <img src={leader.image} alt={leader.name} />
+                    <div className="leader-social">
+                      {leader.linkedin && (
+                        <a href={leader.linkedin} target="_blank" rel="noopener noreferrer">
+                          <Linkedin size={16} />
+                        </a>
+                      )}
+                      {leader.twitter && (
+                        <a href={leader.twitter} target="_blank" rel="noopener noreferrer">
+                          <Twitter size={16} />
+                        </a>
+                      )}
+                      {leader.email && (
+                        <a href={`mailto:${leader.email}`}>
+                          <Mail size={16} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <div className="leader-info">
+                    <h3>{leader.name}</h3>
+                    <p className="leader-position">{leader.position}</p>
+                    <div className="leader-details">
+                      {leader.qualification && (
+                        <span className="leader-qualification">
+                          <GraduationCap size={14} />
+                          {leader.qualification}
+                        </span>
+                      )}
+                      {leader.experience && (
+                        <span className="leader-experience">
+                          <Clock size={14} />
+                          {leader.experience}
+                        </span>
+                      )}
+                    </div>
+                    <p className="leader-bio">{leader.bio}</p>
                   </div>
                 </div>
-                <div className="leader-info">
-                  <h3>{leader.name}</h3>
-                  <p className="leader-position">{leader.position}</p>
-                  <div className="leader-details">
-                    <span className="leader-qualification">
-                      <GraduationCap size={14} />
-                      {leader.qualification}
-                    </span>
-                    <span className="leader-experience">
-                      <Clock size={14} />
-                      {leader.experience}
-                    </span>
-                  </div>
-                  <p className="leader-bio">{leader.bio}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* CTA Section */}
-        <section className="about-cta animate-on-scroll">
+        <section className="about-cta">
           <div className="cta-content">
-            <h2>Join Our Learning Community</h2>
-            <p>Give your child the gift of quality Islamic education</p>
+            <h2>{settings.cta_title || 'Join Our Learning Community'}</h2>
+            <p>{settings.cta_text || 'Give your child the gift of quality Islamic education'}</p>
             <div className="cta-buttons">
-              <Link to="/admissions/apply" className="btn-primary">
-                Apply for Admission
+              <Link to={settings.cta_button_link || '/admissions/apply'} className="btn-primary">
+                {settings.cta_button_text || 'Apply for Admission'}
                 <ArrowRight size={18} />
               </Link>
-              <Link to="/contact" className="btn-secondary">
-                Contact Us
+              <Link to={settings.cta_secondary_button_link || '/contact'} className="btn-secondary">
+                {settings.cta_secondary_button_text || 'Contact Us'}
               </Link>
             </div>
           </div>

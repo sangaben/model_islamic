@@ -12,6 +12,14 @@ import '../styles/Footer.css';
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
+  // Function to scroll to top
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // Use 'smooth' for smooth scrolling, or 'auto' for instant
+    });
+  };
+
   // UPDATED: School details from WhatsApp images
   const schoolDetails = {
     name: "Model Islamic Kindergarten & Primary School - Arua",
@@ -161,7 +169,7 @@ const Footer = () => {
               <ul className="link-list">
                 {quickLinks.map((link) => (
                   <li key={link.path}>
-                    <Link to={link.path} className="link-item">
+                    <Link to={link.path} className="link-item" onClick={scrollToTop}>
                       <ChevronRight className="link-icon" />
                       {link.name}
                     </Link>
@@ -178,7 +186,7 @@ const Footer = () => {
                   const Icon = link.icon;
                   return (
                     <li key={link.path}>
-                      <Link to={link.path} className="link-item">
+                      <Link to={link.path} className="link-item" onClick={scrollToTop}>
                         <Icon className="link-icon" />
                         {link.name}
                       </Link>
@@ -282,13 +290,13 @@ const Footer = () => {
             </div>
             
             <div className="footer-legal">
-              <Link to="/privacy" className="legal-link">
+              <Link to="/privacy" className="legal-link" onClick={scrollToTop}>
                 Privacy Policy
               </Link>
-              <Link to="/terms" className="legal-link">
+              <Link to="/terms" className="legal-link" onClick={scrollToTop}>
                 Terms of Use
               </Link>
-              <Link to="/sitemap" className="legal-link">
+              <Link to="/sitemap" className="legal-link" onClick={scrollToTop}>
                 Sitemap
               </Link>
             </div>

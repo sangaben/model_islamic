@@ -230,3 +230,185 @@ class SiteSettings(models.Model):
     
     def __str__(self):
         return "Site Settings"
+
+
+
+
+
+
+
+# Add this to your existing website/models.py
+
+class News(models.Model):
+    CATEGORY_CHOICES = [
+        ('announcement', 'Announcement'),
+        ('event', 'Event'),
+        ('campus_update', 'Campus Update'),
+        ('achievement', 'Achievement'),
+        ('notice', 'Notice'),
+        ('academic', 'Academic'),
+        ('sports', 'Sports'),
+        ('arts', 'Arts & Culture'),
+    ]
+    
+    title = models.CharField(max_length=200)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='announcement')
+    excerpt = models.TextField(max_length=300, help_text="Short summary displayed on news listing page")
+    content = models.TextField(help_text="Full news article content")
+    featured_image = models.ImageField(upload_to='news/featured/', help_text="Main image for the news article")
+    thumbnail = models.ImageField(upload_to='news/thumbnails/', blank=True, null=True)
+    
+    # Optional fields
+    author = models.CharField(max_length=100, default='Oasis Schools Admin')
+    date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    published_date = models.DateField(auto_now_add=True)
+    
+    # Relationships
+    campus = models.ForeignKey(Campus, on_delete=models.SET_NULL, null=True, blank=True, related_name='news_articles')
+    
+    # Metadata
+    views = models.PositiveIntegerField(default=0)
+    is_featured = models.BooleanField(default=False, help_text="Show on homepage featured section")
+    is_published = models.BooleanField(default=True)
+    order = models.PositiveIntegerField(default=0)
+    
+    # SEO fields
+    meta_title = models.CharField(max_length=200, blank=True)
+    meta_description = models.TextField(max_length=500, blank=True)
+    
+    class Meta:
+        ordering = ['-published_date', '-is_featured', 'order']
+        verbose_name = 'News Article'
+        verbose_name_plural = 'News Articles'
+    
+    def __str__(self):
+        return self.title
+    
+    def save(self, *args, **kwargs):
+        # Auto-generate excerpt if not provided
+        if not self.excerpt and self.content:
+            self.excerpt = self.content[:300] + '...'
+        super().save(*args, **kwargs)
+
+
+# Add these models to your website/models.py
+
+class AboutPageSettings(models.Model):
+    """Main settings for the About page"""
+    hero_title = models.CharField(max_length=200, default='About Our School')
+    hero_subtitle = models.CharField(max_length=500, default='Model Islamic & City Model Schools - Excellence in Education')
+    hero_badge_text = models.CharField(max_length=100, default='بسم الله الرحمن الرحيم')
+    hero_background_image = models.ImageField(upload_to='about/hero/', blank=True, null=True)
+    
+    # Quick info cards
+    info_card_1_title = models.CharField(max_length=100, default='Our Location')
+    info_card_1_text = models.CharField(max_length=200, default='Former TAWAKAL PRIMARY SCHOOL, Pangsha Ward, Arua')
+    info_card_2_title = models.CharField(max_length=100, default='Established')
+    info_card_2_text = models.CharField(max_length=100, default='2008')
+    info_card_3_title = models.CharField(max_length=100, default='Our Motto')
+    info_card_3_text = models.CharField(max_length=200, default='Excellence is our pride')
+    
+    # CTA Section
+    cta_title = models.CharField(max_length=200, default='Join Our Learning Community')
+    cta_text = models.CharField(max_length=500, default='Give your child the gift of quality Islamic education')
+    cta_button_text = models.CharField(max_length=50, default='Apply for Admission')
+    cta_button_link = models.CharField(max_length=200, default='/admissions/apply')
+    cta_secondary_button_text = models.CharField(max_length=50, default='Contact Us')
+    cta_secondary_button_link = models.CharField(max_length=200, default='/contact')
+    
+    is_active = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'About Page Settings'
+        verbose_name_plural = 'About Page Settings'
+    
+    def __str__(self):
+        return "About Page Settings"
+
+
+class HistoryMilestone(models.Model):
+    """History timeline milestones"""
+    year = models.CharField(max_length=20)
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+        ordering = ['order']
+    
+    def __str__(self):
+        return f"{self.year} - {self.title}"
+
+
+class CoreValue(models.Model):
+    """Core values (you already have this, but let's enhance it)"""
+    name = models.CharField(max_length=100)
+    arabic_name = models.CharField(max_length=100, blank=True, help_text="Arabic translation")
+    description = models.TextField()
+    icon = models.CharField(max_length=50, default='Shield')  # Icon name from lucide-react
+    color = models.CharField(max_length=20, default='#10B981')
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+        ordering = ['order']
+    
+    def __str__(self):
+        return self.name
+
+
+class LeadershipMember(models.Model):
+    """Leadership team members"""
+    name = models.CharField(max_length=200)
+    position = models.CharField(max_length=200)
+    qualification = models.CharField(max_length=200, blank=True)
+    experience = models.CharField(max_length=100, blank=True)
+    bio = models.TextField()
+    image = models.ImageField(upload_to='leadership/')
+    email = models.EmailField(blank=True)
+    linkedin = models.URLField(blank=True)
+    twitter = models.URLField(blank=True)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+        ordering = ['order']
+        verbose_name_plural = 'Leadership Members'
+    
+    def __str__(self):
+        return self.name
+
+
+class SchoolStatistic(models.Model):
+    """Statistics displayed on About page"""
+    value = models.CharField(max_length=50)
+    label = models.CharField(max_length=100)
+    icon = models.CharField(max_length=50, default='Users')  # Icon name from lucide-react
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+        ordering = ['order']
+        verbose_name_plural = 'School Statistics'
+    
+    def __str__(self):
+        return f"{self.value} - {self.label}"
+
+
+class MissionVision(models.Model):
+    """Mission and Vision content"""
+    type = models.CharField(max_length=10, choices=[('mission', 'Mission'), ('vision', 'Vision')])
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    points = models.JSONField(default=list, help_text='List of key points')
+    icon = models.CharField(max_length=50, default='Target')
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+        verbose_name_plural = 'Mission & Vision'
+    
+    def __str__(self):
+        return f"{self.get_type_display()}"
