@@ -3,11 +3,10 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { 
   Phone, Mail, MapPin, ChevronRight, Calendar, Award, Users, 
-  BookOpen, Sparkles, Play, X,
-  Heart, Camera, Trophy,
-  GraduationCap, Clock, Quote, Target, Eye,
-  Star, Loader, Shield, Download,
-  ArrowRight, CheckCircle2, Building2, Coffee, Library, Trees
+  BookOpen, Sparkles, Play, X, Heart, Camera, Trophy,
+  GraduationCap, Clock, Quote, Target, Eye, Star, Loader, 
+  Shield, Download, ArrowRight, CheckCircle2, Building2, 
+  Coffee, Library, Trees, Image, Video, Music
 } from 'lucide-react';
 import '../styles/home.css';
 
@@ -23,6 +22,7 @@ const Home = () => {
     gallery: [],
     testimonials: [],
     events: [],
+    moments: [],
     welcome: null,
     cta: null,
     settings: null
@@ -69,6 +69,12 @@ const Home = () => {
       { title: 'Day Care Program', description: 'Safe environment for young children', icon: '🧸' },
       { title: 'Character Building', description: 'Moral and spiritual development', icon: '💚' },
       { title: 'Extracurricular', description: 'Sports and cultural activities', icon: '⚽' }
+    ],
+    moments: [
+      { id: 1, title: 'Quran Recitation Competition', description: 'Students showcasing their memorization skills', image: 'https://images.unsplash.com/photo-1566288623394-377af472d81b?w=600&auto=format', date: '2024-03-15', category: 'Islamic Events' },
+      { id: 2, title: 'Science Fair', description: 'Young scientists presenting their projects', image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&auto=format', date: '2024-02-20', category: 'Academics' },
+      { id: 3, title: 'Sports Day Celebration', description: 'Annual sports competition winners', image: 'https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=600&auto=format', date: '2024-01-10', category: 'Sports' },
+      { id: 4, title: 'Islamic Art Exhibition', description: 'Creative expressions of Islamic art', image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&auto=format', date: '2024-03-01', category: 'Arts' }
     ],
     gallery: [
       { id: 1, title: 'Qur\'an Class', category: 'Islamic Studies', thumbnail: 'https://images.unsplash.com/photo-1566288623394-377af472d81b?w=600&auto=format' },
@@ -162,6 +168,7 @@ const Home = () => {
           gallery: result.gallery?.length > 0 ? result.gallery : staticData.gallery,
           testimonials: result.testimonials?.length > 0 ? result.testimonials : staticData.testimonials,
           events: result.events?.length > 0 ? result.events : staticData.events,
+          moments: result.moments || staticData.moments,
           welcome: result.welcome || staticData.welcome,
           cta: result.cta || staticData.cta,
           settings: result.settings || staticData.settings
@@ -180,13 +187,13 @@ const Home = () => {
           gallery: staticData.gallery,
           testimonials: staticData.testimonials,
           events: staticData.events,
+          moments: staticData.moments,
           welcome: staticData.welcome,
           cta: staticData.cta,
           settings: staticData.settings
         });
         setError('Using offline data. API connection failed.');
       } finally {
-        // Short delay to show loading animation
         setTimeout(() => setLoading(false), 800);
       }
     };
@@ -297,7 +304,7 @@ const Home = () => {
         </div>
       )}
 
-      {/* Hero Section */}
+      {/* Hero Section with Dynamic Slides */}
       <section className="modern-hero">
         <div className="hero-backdrop">
           {heroSlides.map((slide, index) => {
@@ -334,7 +341,7 @@ const Home = () => {
               </div>
               
               <h1 className="hero-title">
-                {data.welcome?.title || 'Model Islamic'} <span className="highlight">School</span>
+                {currentSlideInfo.title || data.welcome?.title || 'Model Islamic School'}
               </h1>
               
               <p className="hero-description">
@@ -389,6 +396,19 @@ const Home = () => {
             </div>
           </div>
         </div>
+        
+        {/* Slide Indicators */}
+        {heroSlides.length > 1 && (
+          <div className="hero-indicators">
+            {heroSlides.map((_, index) => (
+              <button
+                key={index}
+                className={`indicator ${index === currentSlide ? 'active' : ''}`}
+                onClick={() => setCurrentSlide(index)}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Welcome / About Section */}
@@ -450,6 +470,46 @@ const Home = () => {
                   <p>{schoolInfo.motto}</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Moments at School Section - Beautifully Styled */}
+      {data.moments?.length > 0 && (
+        <section className="modern-moments">
+          <div className="container">
+            <div className="section-header centered">
+              <span className="section-badge">Moments at School</span>
+              <h2>Capturing Precious Memories</h2>
+              <p>A glimpse into the vibrant life at Model Islamic School</p>
+            </div>
+            
+            <div className="moments-grid">
+              {data.moments.map((moment, idx) => (
+                <div key={moment.id || idx} className="moment-card">
+                  <div className="moment-image">
+                    <img src={getImageUrl(moment.image)} alt={moment.title} />
+                    <div className="moment-overlay">
+                      <div className="moment-category">{moment.category}</div>
+                      <button className="moment-view">
+                        <Camera size={18} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="moment-content">
+                    <div className="moment-date">
+                      <Calendar size={14} />
+                      <span>{moment.date ? new Date(moment.date).toLocaleDateString() : 'Recent'}</span>
+                    </div>
+                    <h3>{moment.title}</h3>
+                    <p>{moment.description}</p>
+                    <Link to="/gallery" className="moment-link">
+                      View Gallery <ArrowRight size={14} />
+                    </Link>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -531,31 +591,6 @@ const Home = () => {
                   </div>
                   <h3>{offer.title}</h3>
                   <p>{offer.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Gallery Section */}
-      {data.gallery?.length > 0 && (
-        <section className="modern-gallery">
-          <div className="container">
-            <div className="section-header centered">
-              <span className="section-badge">Gallery</span>
-              <h2>Moments at Our School</h2>
-              <p>Glimpses of daily life and learning</p>
-            </div>
-            
-            <div className="gallery-grid-modern">
-              {data.gallery.slice(0, 4).map((image, idx) => (
-                <div key={image.id || idx} className="gallery-item-modern">
-                  <img src={getImageUrl(image.thumbnail || image.image)} alt={image.title} />
-                  <div className="gallery-overlay-modern">
-                    <h4>{image.title}</h4>
-                    <p>{image.category}</p>
-                  </div>
                 </div>
               ))}
             </div>

@@ -1,69 +1,52 @@
 // src/components/News.jsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Calendar, Eye, Clock, User, Tag, ArrowRight, RefreshCw, Newspaper } from 'lucide-react';
+import '../styles//News.css';
 
 const News = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [debug, setDebug] = useState({});
+  const [selectedNews, setSelectedNews] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  // API Base URL - Try different options
   const API_BASE_URL = 'http://127.0.0.1:8000/api/website';
-  // const API_BASE_URL = 'http://localhost:8000/api/website';
-  // const API_BASE_URL = 'http://192.168.1.100:8000/api/website'; // Use your actual IP
 
-  // Fetch news from API
   const fetchNews = async () => {
     setLoading(true);
-    setDebug({ ...debug, fetching: true, url: `${API_BASE_URL}/news/` });
-    
     try {
-      console.log('Fetching news from:', `${API_BASE_URL}/news/`);
-      
       const response = await axios.get(`${API_BASE_URL}/news/`, {
-        timeout: 10000, // 10 second timeout
+        timeout: 10000,
         headers: {
           'Content-Type': 'application/json',
         }
       });
       
-      console.log('Response received:', response.data);
-      setDebug({ 
-        ...debug, 
-        success: true, 
-        data: response.data,
-        status: response.status 
-      });
-      
-      // Handle different response structures
       let newsData = [];
       if (response.data.results) {
         newsData = response.data.results;
       } else if (Array.isArray(response.data)) {
         newsData = response.data;
-      } else {
-        newsData = [];
       }
       
       setNews(newsData);
       setError(null);
     } catch (err) {
-      console.error('Error details:', err);
-      console.error('Error message:', err.message);
-      console.error('Error response:', err.response);
-      
-      setDebug({
-        ...debug,
-        error: true,
-        errorMessage: err.message,
-        errorResponse: err.response?.data,
-        errorStatus: err.response?.status
-      });
-      
-      setError(`Failed to load news: ${err.message}. Please check if Django server is running.`);
+      console.error('Error:', err);
+      setError('Failed to load news. Please check if Django server is running.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchNewsDetail = async (id) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/news/${id}/`);
+      setSelectedNews(response.data);
+      setModalOpen(true);
+    } catch (err) {
+      console.error('Error fetching news details:', err);
     }
   };
 
@@ -71,7 +54,6 @@ const News = () => {
     fetchNews();
   }, []);
 
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'Date not specified';
     try {
@@ -82,50 +64,54 @@ const News = () => {
     }
   };
 
-  // Loading state
+  const getCategoryClass = (category) => {
+    const classes = {
+      'announcement': 'category-announcement',
+      'event': 'category-event',
+      'campus_update': 'category-campus',
+      'achievement': 'category-achievement',
+      'notice': 'category-notice',
+      'academic': 'category-academic',
+      'sports': 'category-sports',
+      'arts': 'category-arts',
+    };
+    return classes[category] || 'category-default';
+  };
+
+  const getCategoryIcon = (category) => {
+    switch(category) {
+      case 'announcement': return '📢';
+      case 'event': return '🎉';
+      case 'campus_update': return '🏫';
+      case 'achievement': return '🏆';
+      case 'notice': return '📋';
+      case 'academic': return '📚';
+      case 'sports': return '⚽';
+      case 'arts': return '🎨';
+      default: return '📰';
+    }
+  };
+
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto py-12">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
-          <p className="text-blue-600">Loading news from: {API_BASE_URL}/news/</p>
-        </div>
-        <div className="animate-pulse">
-          <div className="h-10 bg-gray-200 rounded w-64 mb-8"></div>
-          <div className="space-y-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white shadow-lg rounded-lg p-6">
-                <div className="flex justify-between mb-2">
-                  <div className="h-4 bg-gray-200 rounded w-24"></div>
-                  <div className="h-4 bg-gray-200 rounded w-32"></div>
-                </div>
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-full mb-1"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-              </div>
-            ))}
-          </div>
+      <div className="news-container">
+        <div className="news-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading latest news...</p>
         </div>
       </div>
     );
   }
 
-  // Debug info (remove in production)
-  if (debug.error) {
+  if (error) {
     return (
-      <div className="max-w-4xl mx-auto py-12">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-4">
-          <h2 className="text-red-800 font-bold mb-2">Error Loading News</h2>
-          <p className="text-red-700 mb-2">{error}</p>
-          <div className="bg-white rounded p-4 mt-4">
-            <h3 className="font-bold mb-2">Debug Information:</h3>
-            <pre className="text-xs overflow-auto">
-              {JSON.stringify(debug, null, 2)}
-            </pre>
-          </div>
-          <button 
-            onClick={fetchNews}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
+      <div className="news-container">
+        <div className="news-error">
+          <Newspaper size={48} />
+          <h2>Unable to Load News</h2>
+          <p>{error}</p>
+          <button onClick={fetchNews}>
+            <RefreshCw size={18} />
             Try Again
           </button>
         </div>
@@ -134,45 +120,150 @@ const News = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-12">
-      {/* Debug banner - remove in production */}
-      <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4 text-sm">
-        <p className="text-green-700">✅ API Connected: {API_BASE_URL}/news/</p>
-        <p className="text-green-700">📊 Found {news.length} news articles</p>
+    <div className="news-wrapper">
+      {/* Hero Section */}
+      <div className="news-hero">
+        <div className="news-hero-overlay"></div>
+        <div className="news-hero-content">
+          <div className="hero-icon">
+            <Newspaper size={40} />
+          </div>
+          <h1>News & Updates</h1>
+          <p>Stay informed about the latest happenings at Model Islamic School</p>
+          <div className="hero-stats">
+            <div className="hero-stat">
+              <span className="stat-value">{news.length}</span>
+              <span className="stat-label">Total Articles</span>
+            </div>
+            <div className="hero-stat">
+              <span className="stat-value">{new Date().getFullYear()}</span>
+              <span className="stat-label">Current Year</span>
+            </div>
+          </div>
+        </div>
+        <div className="hero-wave">
+          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 64L60 69.3C120 75 240 85 360 80C480 75 600 53 720 48C840 43 960 53 1080 58.7C1200 64 1320 64 1380 64L1440 64L1440 120L1380 120C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120L0 120Z" fill="#f8fafc"/>
+          </svg>
+        </div>
       </div>
 
-      <h1 className="text-4xl font-bold text-gray-900 mb-8">News & Updates</h1>
-      
-      {news.length === 0 ? (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-12 text-center">
-          <p className="text-yellow-800 text-lg mb-2">No news articles found</p>
-          <p className="text-yellow-600">Please add some news articles in Django admin panel.</p>
-          <p className="text-yellow-600 text-sm mt-2">
-            Go to: http://127.0.0.1:8000/admin/website/news/add/
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {news.map((item) => (
-            <div key={item.id} className="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-blue-600 font-semibold">
-                  {item.category_display || item.category}
-                </span>
-                <span className="text-sm text-gray-500">
-                  {formatDate(item.published_date || item.date)}
-                </span>
-              </div>
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">{item.title}</h2>
-              <p className="text-gray-600">{item.excerpt}</p>
-              <button 
-                className="mt-4 text-blue-600 hover:text-blue-800 font-medium"
-                onClick={() => window.open(`/news/${item.id}`, '_blank')}
+      <div className="news-main">
+        {news.length === 0 ? (
+          <div className="empty-news">
+            <Newspaper size={64} />
+            <h3>No News Articles Found</h3>
+            <p>Please add some news articles in the Django admin panel.</p>
+            <p className="admin-link">Go to: /admin/website/news/add/</p>
+          </div>
+        ) : (
+          <div className="news-grid">
+            {news.map((item, index) => (
+              <article 
+                key={item.id} 
+                className={`news-card ${getCategoryClass(item.category)}`}
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                Read More →
+                <div className="news-card-inner">
+                  <div className="news-category">
+                    <span className="category-icon">{getCategoryIcon(item.category)}</span>
+                    <span className={`category-name ${getCategoryClass(item.category)}`}>
+                      {item.category_display || item.category}
+                    </span>
+                  </div>
+                  
+                  <h2 className="news-title">{item.title}</h2>
+                  
+                  <p className="news-excerpt">{item.excerpt}</p>
+                  
+                  <div className="news-meta">
+                    <div className="meta-item">
+                      <Calendar size={14} />
+                      <span>{formatDate(item.published_date || item.date)}</span>
+                    </div>
+                    {item.views !== undefined && (
+                      <div className="meta-item">
+                        <Eye size={14} />
+                        <span>{item.views} views</span>
+                      </div>
+                    )}
+                    {item.author && (
+                      <div className="meta-item">
+                        <User size={14} />
+                        <span>{item.author}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <button 
+                    className="read-more-btn"
+                    onClick={() => fetchNewsDetail(item.id)}
+                  >
+                    Read Full Article
+                    <ArrowRight size={16} />
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Modal for full article */}
+      {modalOpen && selectedNews && (
+        <div className="modal-overlay" onClick={() => setModalOpen(false)}>
+          <div className="news-modal" onClick={(e) => e.stopPropagation()}>
+            <div className={`modal-header ${getCategoryClass(selectedNews.category)}`}>
+              <div>
+                <span className="modal-category-badge">
+                  {getCategoryIcon(selectedNews.category)} {selectedNews.category_display || selectedNews.category}
+                </span>
+                <h2>{selectedNews.title}</h2>
+              </div>
+              <button className="modal-close" onClick={() => setModalOpen(false)}>×</button>
+            </div>
+            
+            <div className="modal-body">
+              {selectedNews.featured_image && (
+                <div className="modal-image">
+                  <img src={selectedNews.featured_image} alt={selectedNews.title} />
+                </div>
+              )}
+              
+              <div className="modal-meta">
+                <div className="meta-item">
+                  <Calendar size={14} />
+                  <span>{formatDate(selectedNews.published_date || selectedNews.date)}</span>
+                </div>
+                {selectedNews.author && (
+                  <div className="meta-item">
+                    <User size={14} />
+                    <span>By {selectedNews.author}</span>
+                  </div>
+                )}
+                {selectedNews.views !== undefined && (
+                  <div className="meta-item">
+                    <Eye size={14} />
+                    <span>{selectedNews.views} views</span>
+                  </div>
+                )}
+                <div className="meta-item">
+                  <Clock size={14} />
+                  <span>{Math.ceil((selectedNews.content || selectedNews.excerpt).length / 1000)} min read</span>
+                </div>
+              </div>
+              
+              <div className="modal-content">
+                <p>{selectedNews.content || selectedNews.excerpt}</p>
+              </div>
+            </div>
+            
+            <div className="modal-footer">
+              <button className="close-btn" onClick={() => setModalOpen(false)}>
+                Close
               </button>
             </div>
-          ))}
+          </div>
         </div>
       )}
     </div>
