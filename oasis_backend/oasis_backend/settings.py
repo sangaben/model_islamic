@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-your-secret-key-here'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['modelislamicschools.sangabiz.com',  "31.220.78.100", 'www.modelislamicschools.sangabiz.com']
 
 # Application definition
 INSTALLED_APPS = [
