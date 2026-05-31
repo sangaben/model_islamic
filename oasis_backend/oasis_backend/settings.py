@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'cloudinary',
     'cloudinary_storage',
+	"django_filters",
     
     # Local apps
     'admissions',
