@@ -134,4 +134,24 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+
+
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Model Islamic Admin",
+    "site_header": "Model Islamic Schools",
+    "site_brand": "Model Islamic",
+    "welcome_sign": "Welcome to School Admin Panel",
+    "copyright": "Model Islamic School",
+
+    "search_model": ["auth.User"],
+
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+    ],
+
+    "show_sidebar": True,
+    "navigation_expanded": True,
+}
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
